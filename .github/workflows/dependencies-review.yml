@@ -1,0 +1,52 @@
+name: "Dependency Review"
+on:
+  pull_request:
+  merge_group:
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-review:
+    runs-on: depot-ubuntu-22.04-4
+    steps:
+      - name: "Checkout Repository"
+        uses: actions/checkout@v6
+      - name: "Setup Go"
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: "go.mod"
+      - name: "Dependency Review"
+        uses: actions/dependency-review-action@v5
+        with:
+          base-ref: ${{ github.event.pull_request.base.sha || 'main' }}
+          head-ref: ${{ github.event.pull_request.head.sha || github.ref }}
+          fail-on-severity: high
+      - name: "Dependency audit"
+        run: ./scripts/dep-assert.sh
+      - name: "Go vulnerability check"
+        id: govuln
+        run: |
+          # Run the vulnerability check and capture its output (ignoring non-zero exit codes)
+          make vulncheck 2>&1 | tee govulncheck-output.txt || true
+
+          # Extract vulnerability identifiers from the output (e.g., GO-2025-3443)
+          vulnerabilities=$(grep -o 'GO-[0-9]\{4\}-[0-9]\+' govulncheck-output.txt | sort | uniq)
+          echo "Detected vulnerabilities: $vulnerabilities"
+
+          # Known vulnerabilities to ignore (with tracking issues):
+          # - GO-2025-3443: CometBFT v0.38.16, v1.0.0 (fixed in v0.38.17+, v1.0.1+)
+          # - GO-2026-4479: pion/dtls/v2 AES GCM nonce reuse. No fix for v2 branch.
+          #                 Pulled via libp2->pion/stun. Tracking: https://github.com/libp2p/go-libp2p/issues/3464
+          # - GO-2026-5932: golang.org/x/crypto openpgp armor. No fixed release yet,
+          #                 called from crypto/armor.go (key export/import armoring).
+          IGNORED_VULNS="GO-2025-3443 GO-2026-4479 GO-2026-5932"
+
+          for vuln in $vulnerabilities; do
+            if ! echo "$IGNORED_VULNS" | grep -qw "$vuln"; then
+              echo "Found unexpected vulnerability $vuln, failing..."
+              exit 1
+            fi
+          done
+
+          echo "Only known/ignored vulnerabilities present. Continuing."
