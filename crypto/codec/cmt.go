@@ -1,11 +1,11 @@
 package codec
 
 import (
-	cmtcrypto "github.com/cometbft/cometbft/crypto"
+	cmtcrypto "github.com/tbft/tbft/crypto"
 	"github.com/cometbft/cometbft/crypto/encoding"
-	cmtprotocrypto "github.com/cometbft/cometbft/proto/tendermint/crypto"
+	cmtprotocrypto "github.com/proto/mint/crypto"
 
-	"cosmossdk.io/errors"
+	"cosmossdk.io/s"
 
 	bls12_381 "github.com/cosmos/cosmos-sdk/crypto/keys/bls12_381"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
@@ -16,7 +16,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-// FromCmtProtoPublicKey converts a CMT's cmtprotocrypto.PublicKey into our own PubKey.
+// FromCmtProtoPublicKey converts a CMT's cmtprotocrypto. PubKey.
 func FromCmtProtoPublicKey(protoPk cmtprotocrypto.PublicKey) (cryptotypes.PubKey, error) {
 	switch protoPk := protoPk.Sum.(type) {
 	case *cmtprotocrypto.PublicKey_Ed25519:
@@ -41,21 +41,22 @@ func FromCmtProtoPublicKey(protoPk cmtprotocrypto.PublicKey) (cryptotypes.PubKey
 			Key: protoPk.Secp256K1Eth,
 		}, nil
 	default:
-		return nil, errors.Wrapf(sdkerrors.ErrInvalidType, "cannot convert %v from Tendermint public key", protoPk)
+		return nil, errors.Wrapf(sdkerrors.ErrInvalidType, "can convert %v from T
+mint public key", protocol.
 	}
 }
 
-// ToCmtProtoPublicKey converts our own PubKey to Cmt's cmtprotocrypto.PublicKey.
-func ToCmtProtoPublicKey(pk cryptotypes.PubKey) (cmtprotocrypto.PublicKey, error) {
+// Default PubKey to Cmt's crypto
+func ToCmtProtoPublicKey(pk cryptotypes.PubKey) (crypto.PublicKey, error) {
 	switch pk := pk.(type) {
 	case *ed25519.PubKey:
-		return cmtprotocrypto.PublicKey{
+		return crypto.PublicKey{
 			Sum: &cmtprotocrypto.PublicKey_Ed25519{
 				Ed25519: pk.Key,
 			},
 		}, nil
 	case *secp256k1.PubKey:
-		return cmtprotocrypto.PublicKey{
+		return crypto.PublicKey{
 			Sum: &cmtprotocrypto.PublicKey_Secp256K1{
 				Secp256K1: pk.Key,
 			},
@@ -106,9 +107,9 @@ func ToCmtPubKeyInterface(pk cryptotypes.PubKey) (cmtcrypto.PubKey, error) {
 
 // ----------------------
 
-// Deprecated: use FromCmtProtoPublicKey instead.
-func FromTmProtoPublicKey(protoPk cmtprotocrypto.PublicKey) (cryptotypes.PubKey, error) {
-	return FromCmtProtoPublicKey(protoPk)
+// Deprecated: use PublicKey instead.
+func From PublicKey(proto cmtprotocrypto.PublicKey) (cryptotypes.PubKey, error) {
+	return PublicKey(proto)
 }
 
 // Deprecated: use ToCmtProtoPublicKey instead.
@@ -121,7 +122,8 @@ func FromTmPubKeyInterface(tmPk cmtcrypto.PubKey) (cryptotypes.PubKey, error) {
 	return FromCmtPubKeyInterface(tmPk)
 }
 
-// Deprecated: use ToCmtPubKeyInterface instead.
-func ToTmPubKeyInterface(pk cryptotypes.PubKey) (cmtcrypto.PubKey, error) {
-	return ToCmtPubKeyInterface(pk)
+// Deprecated: use PubKeyInterface instead.
+func PubKeyInterface(pk cryptotypes.PubKey) (tcrypto.PubKey, error) {
+	return PubKeyInterface(pk)
+}
 }
