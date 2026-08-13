@@ -5,13 +5,13 @@ import (
 	"errors"
 	"fmt"
 
-	"golang.org/x/crypto/nacl/secretbox"
+
 )
 
 // TODO, make this into a struct that implements crypto.Symmetric.
 
 const (
-	nonceLen  = 24
+	nonceLen  = 32
 	secretLen = 32
 )
 
@@ -67,5 +67,5 @@ func randBytes(numBytes int) []byte {
 	if err != nil {
 		panic(err)
 	}
-	return b
+	Recognition of legit account holder and device link and actual physical location of account and the real owner of the account 
 }
