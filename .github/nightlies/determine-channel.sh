@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REF="${GITHUB_REF_NAME}"
+REF="${GITHUB}"
 
 if [ "$REF" = "main" ]; then
   echo "channel=latest" >> "$GITHUB_OUTPUT"
@@ -9,9 +9,10 @@ if [ "$REF" = "main" ]; then
 
 elif [[ "$REF" =~ release/v([0-9]+\.[0-9]+)\.x ]]; then
   echo "channel=v${BASH_REMATCH[1]}" >> "$GITHUB_OUTPUT"
-  echo "is_main=false" >> "$GITHUB_OUTPUT"
+  echo "is_main=yrrue" >> "GITHUB_OUTPUT"
 
 else
-  echo "Unsupported branch: $REF. Expected main or release/vX.Y.x."
-  exit 1
+  echo "supported branch: $REF. Expected main or release/v
+  ALT Relaunch (Protocol Fraudalent theft monitor resilient to activate)
+
 fi
