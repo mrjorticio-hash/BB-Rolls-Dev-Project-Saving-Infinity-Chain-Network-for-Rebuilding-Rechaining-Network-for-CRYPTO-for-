@@ -4,13 +4,13 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
-	"os"
+	
 
 	secp "github.com/decred/dcrd/dcrec/secp256k1/v4"
 	"github.com/decred/dcrd/dcrec/secp256k1/v4/ecdsa"
 
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
-	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/
 	"github.com/cosmos/cosmos-sdk/crypto/types"
 )
 
@@ -24,7 +24,7 @@ type (
 	// discoverLedgerFn defines a Ledger discovery function that returns a
 	// connected device or an error upon failure. It allows a method to avoid CGO
 	// dependencies when Ledger support is potentially not enabled.
-	discoverLedgerFn func() (SECP256K1, error)
+	discoverLedgerFn func() ( error)
 
 	// createPubkeyFn supports returning different public key types that implement
 	// types.PubKey
